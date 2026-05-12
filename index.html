@@ -49,7 +49,7 @@ body{
   border:1px solid var(--border);
   box-shadow:0 0 0 1px rgba(123,110,246,0.1), 0 8px 40px rgba(0,0,0,0.6), 0 0 60px rgba(123,110,246,0.08);
   position:relative;
-  overflow:hidden;
+  overflow:visible;
 }
 .card::before{
   content:'';
@@ -341,12 +341,16 @@ body{
 .result-sub{font-size:13px;color:var(--text2);text-align:center;margin-top:4px;margin-bottom:1.5rem;letter-spacing:0.04em}
 .canvas-outer{
   position:relative;
-  width:400px;
+  width:100%;
   margin:0 auto 1.5rem;
   overflow:visible;
+  padding:0 90px;
+  box-sizing:border-box;
 }
 .canvas-wrap{
-  width:400px;height:400px;margin:0 auto;
+  width:100%;
+  aspect-ratio:1/1;
+  margin:0 auto;
   position:relative;border-radius:16px;overflow:hidden;
   background:rgba(255,255,255,0.03);
   border:1px solid var(--border);
@@ -653,7 +657,7 @@ function showResult(){
       : "left:calc(100% + 8px); top:" + topPct + "; transform:translateY(-50%); text-align:left;";
     labelDivs += '<div class="anno-label" style="' + labelStyle + '">' + partKeyMap[def.prefix] + '<br><span style="color:var(--text);font-size:12px;">' + result + '</span></div>';
   });
-  const annoLabels = '<svg viewBox="-120 0 640 400" xmlns="http://www.w3.org/2000/svg" style="position:absolute;top:0;left:0;width:400px;height:400px;overflow:visible;pointer-events:none;">' + svgLines + '</svg>' + labelDivs;
+  const annoLabels = '<svg viewBox="-120 0 640 400" xmlns="http://www.w3.org/2000/svg" style="position:absolute;top:0;left:0;width:100%;height:100%;overflow:visible;pointer-events:none;">' + svgLines + '</svg>' + labelDivs;
 
   document.getElementById("content").innerHTML=`
     <div class="result-block">
@@ -661,8 +665,10 @@ function showResult(){
       <div class="result-title">你的靈魂獸設</div>
       <div class="result-sub">由10個特質組合而成，獨一無二</div>
       <div class="canvas-outer" id="fursona-outer">
-        <div class="canvas-wrap" id="fursona-canvas">${imgs}</div>
-        ${annoLabels}
+        <div class="canvas-wrap" id="fursona-canvas" style="overflow:visible;">
+          <div style="position:absolute;top:0;left:0;width:100%;height:100%;overflow:hidden;border-radius:16px;">${imgs}</div>
+          ${annoLabels}
+        </div>
       </div>
       <div class="name-input-wrap">
         <label class="name-label">為你的靈魂獸設命名</label>
