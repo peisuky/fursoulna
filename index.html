@@ -343,6 +343,7 @@ body{
   position:relative;
   width:400px;
   margin:0 auto 1.5rem;
+  overflow:visible;
 }
 .canvas-wrap{
   width:400px;height:400px;margin:0 auto;
@@ -355,7 +356,7 @@ body{
 /* 拉線標示 */
 .anno-svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:visible;}
 .anno-label{position:absolute;font-size:11px;font-weight:600;color:var(--accent2);
-  white-space:nowrap;letter-spacing:0.05em;text-shadow:0 0 8px rgba(123,110,246,0.6);}
+  white-space:nowrap;letter-spacing:0.05em;}
 .parts-list{border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:1.5rem;background:rgba(255,255,255,0.02)}
 .part-row{display:flex;align-items:center;padding:10px 14px;border-bottom:1px solid rgba(46,39,96,0.5)}
 .part-row:last-child{border-bottom:none}
@@ -652,7 +653,7 @@ function showResult(){
       : "left:calc(100% + 8px); top:" + topPct + "; transform:translateY(-50%); text-align:left;";
     labelDivs += '<div class="anno-label" style="' + labelStyle + '">' + partKeyMap[def.prefix] + '<br><span style="color:var(--text);font-size:12px;">' + result + '</span></div>';
   });
-  const annoLabels = '<svg class="anno-svg" viewBox="-120 0 640 400" xmlns="http://www.w3.org/2000/svg" style="position:absolute;top:0;left:0;width:100%;height:100%;overflow:visible;pointer-events:none;">' + svgLines + '</svg>' + labelDivs;
+  const annoLabels = '<svg viewBox="-120 0 640 400" xmlns="http://www.w3.org/2000/svg" style="position:absolute;top:0;left:0;width:400px;height:400px;overflow:visible;pointer-events:none;">' + svgLines + '</svg>' + labelDivs;
 
   document.getElementById("content").innerHTML=`
     <div class="result-block">
@@ -661,7 +662,6 @@ function showResult(){
       <div class="result-sub">由10個特質組合而成，獨一無二</div>
       <div class="canvas-outer" id="fursona-outer">
         <div class="canvas-wrap" id="fursona-canvas">${imgs}</div>
-        <svg class="anno-svg" id="anno-svg" viewBox="-120 0 640 400" xmlns="http://www.w3.org/2000/svg"></svg>
         ${annoLabels}
       </div>
       <div class="name-input-wrap">
