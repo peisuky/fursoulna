@@ -49,7 +49,7 @@ body{
   border:1px solid var(--border);
   box-shadow:0 0 0 1px rgba(123,110,246,0.1), 0 8px 40px rgba(0,0,0,0.6), 0 0 60px rgba(123,110,246,0.08);
   position:relative;
-  overflow:hidden;
+  overflow:visible;
 }
 .card::before{
   content:'';
@@ -341,11 +341,16 @@ body{
 .result-sub{font-size:13px;color:var(--text2);text-align:center;margin-top:4px;margin-bottom:1.5rem;letter-spacing:0.04em}
 .canvas-outer{
   position:relative;
-  width:400px;
+  width:100%;
   margin:0 auto 1.5rem;
+  overflow:visible;
+  padding:0 90px;
+  box-sizing:border-box;
 }
 .canvas-wrap{
-  width:400px;height:400px;margin:0 auto;
+  width:100%;
+  aspect-ratio:1/1;
+  margin:0 auto;
   position:relative;border-radius:16px;overflow:hidden;
   background:rgba(255,255,255,0.03);
   border:1px solid var(--border);
@@ -355,7 +360,7 @@ body{
 /* 拉線標示 */
 .anno-svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:visible;}
 .anno-label{position:absolute;font-size:11px;font-weight:600;color:var(--accent2);
-  white-space:nowrap;letter-spacing:0.05em;text-shadow:0 0 8px rgba(123,110,246,0.6);}
+  white-space:nowrap;letter-spacing:0.05em;}
 .parts-list{border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:1.5rem;background:rgba(255,255,255,0.02)}
 .part-row{display:flex;align-items:center;padding:10px 14px;border-bottom:1px solid rgba(46,39,96,0.5)}
 .part-row:last-child{border-bottom:none}
@@ -427,11 +432,22 @@ const LAYERS = {
   "ear_cat": "layers/ear_cat.png",
   "ear_deer": "layers/ear_deer.png",
   "ear_dog": "layers/ear_dog.png",
+  "eyebrow_1": "layers/eyebrow_1.png",
+  "eyebrow_2": "layers/eyebrow_2.png",
+  "eyebrow_3": "layers/eyebrow_3.png",
+  "eyebrow_4": "layers/eyebrow_4.png",
   "eye_lazy": "layers/eye_lazy.png",
   "eye_round": "layers/eye_round.png",
   "eye_shock": "layers/eye_shock.png",
   "eye_smile": "layers/eye_smile.png",
-  "head": "layers/head.png",
+  "hair_1": "layers/hair_1.png",
+  "hair_2": "layers/hair_2.png",
+  "hair_3": "layers/hair_3.png",
+  "hair_4": "layers/hair_4.png",
+  "head_1": "layers/head_1.png",
+  "head_2": "layers/head_2.png",
+  "head_3": "layers/head_3.png",
+  "head_4": "layers/head_4.png",
   "horn_bull": "layers/horn_bull.png",
   "horn_deer": "layers/horn_deer.png",
   "horn_standear": "layers/horn_standear.png",
@@ -444,7 +460,7 @@ const LAYERS = {
 };
 
 // 圖層顯示順序（底→頂），與PSD一致
-const LAYER_ORDER = ["tail_dog", "tail_bull", "tail_cat", "body", "horn_bull", "horn_deer", "head", "horn_standear", "ear_dog", "ear_cat", "ear_deer", "ear_bear", "eye_round", "eye_lazy", "eye_shock", "eye_smile", "nose_cat", "nose_bull", "nose_dog"];
+const LAYER_ORDER = ["tail_dog", "tail_bull", "tail_cat", "body", "horn_bull", "horn_deer", "head_1", "head_2", "head_3", "head_4", "horn_standear", "ear_dog", "ear_cat", "ear_deer", "ear_bear", "eye_round", "eye_lazy", "eye_shock", "eye_smile", "eyebrow_1", "eyebrow_2", "eyebrow_3", "eyebrow_4", "nose_cat", "nose_bull", "nose_dog", "hair_1", "hair_2", "hair_3", "hair_4"];
 
 const questions=[
   {part:"耳朵",icon:"👂",text:"朋友突然從背後叫你，你的反應是？",options:[
@@ -468,32 +484,32 @@ const questions=[
   {part:"鼻子",icon:"👃",text:"走進一個陌生的空間，你第一個感知是？",options:[
     {label:"味道",result:"大黑獸鼻",layer:"nose_bull"},
     {label:"光線和顏色",result:"小三角鼻",layer:"nose_cat"},
-    {label:"溫度和濕度",result:"扁圓鼻",layer:"nose_cat"},
+    {label:"溫度和濕度",result:"扁圓鼻",layer:"nose_dog"},
     {label:"人的視線",result:"人鼻",layer:null}
   ]},
   {part:"角",icon:"🦌",text:"你在群體中通常是什麼角色？",options:[
     {label:"自然成為話題中心",result:"分叉鹿角",layer:"horn_deer"},
-    {label:"負責定調氣氛",result:"彎角",layer:"hron_bull"},
+    {label:"負責定調氣氛",result:"彎角",layer:"horn_bull"},
     {label:"默默觀察然後突然插嘴",result:"獸耳加強版",layer:"horn_standear"},
     {label:"跟著走就好",result:"無角",layer:null}
   ]},
-  {part:"體型",icon:"💪",text:"你面對壓力的方式？",options:[
-    {label:"正面剛，直接解決",result:"壯碩型",layer:null},
-    {label:"扛著不說，自己消化",result:"寬肩厚實型",layer:null},
-    {label:"快速分析然後行動",result:"精實型",layer:null},
-    {label:"先躲起來再說",result:"纖細型",layer:null}
+  {part:"頭型",icon:"💀",text:"你給陌生人的第一印象通常是？",options:[
+    {label:"乾淨、不多話，讓人猜不透",result:"光滑圓頭",layer:"head_1"},
+    {label:"有點混亂、但莫名有魅力",result:"炸毛鋸齒頭",layer:"head_2"},
+    {label:"親切、帶點隨意的可愛感",result:"圓頭碎毛",layer:"head_3"},
+    {label:"有點痞、帶點江湖氣",result:"鬢角型",layer:"head_4"}
   ]},
-  {part:"手爪",icon:"🐾",text:"你喜歡的肢體接觸方式？",options:[
-    {label:"摸頭、拍肩、牽手都OK",result:"肉球爪",layer:null},
-    {label:"不太喜歡被碰，握手就好",result:"蹄感指節",layer:null},
-    {label:"熊抱派，用力才有感",result:"利爪",layer:null},
-    {label:"保持物理距離謝謝",result:"人手",layer:null}
+  {part:"髮型",icon:"💇",text:"你現在的能量狀態比較接近哪個？",options:[
+    {label:"還好，維持在日常水位",result:"側邊亂毛",layer:"hair_1"},
+    {label:"超高，什麼都想衝",result:"爆炸尖刺",layer:"hair_2"},
+    {label:"低電量，能省則省",result:"極短一撮",layer:"hair_3"},
+    {label:"外表平靜，內心有根刺",result:"呆毛",layer:"hair_4"}
   ]},
-  {part:"毛色",icon:"🎨",text:"你的房間或桌面風格？",options:[
-    {label:"木質暖色、有點亂但有溫度",result:"暖棕／米色系",layer:null},
-    {label:"深色冷調、極簡",result:"冷灰／藍色系",layer:null},
-    {label:"黑白對比、乾淨俐落",result:"黑白色系",layer:null},
-    {label:"繽紛花俏、貼紙到處貼",result:"繽紛花色",layer:null}
+  {part:"眉型",icon:"🫤",text:"朋友跟你說了一件很扯的事，你的第一反應是？",options:[
+    {label:"「你認真的？」語氣強硬，直接質問",result:"粗斜眉",layer:"eyebrow_1"},
+    {label:"沉默三秒，用眼神表達一切",result:"細尖眉",layer:"eyebrow_2"},
+    {label:"「喔～這樣啊」，聽完再說",result:"平緩細眉",layer:"eyebrow_3"},
+    {label:"「等等……這是真的嗎？」半信半疑",result:"挑眉",layer:"eyebrow_4"}
   ]},
   {part:"花紋",icon:"✨",text:"你的穿衣風格？",options:[
     {label:"小細節控，局部圖案點綴",result:"斑點紋",layer:null},
@@ -594,7 +610,7 @@ function showResult(){
   }));
 
   // 收集這次選了哪些layer key
-  const activeLayers = new Set(["body","head"]);
+  const activeLayers = new Set(["body"]);
   parts.forEach(p=>{ if(p.layer) activeLayers.add(p.layer); });
   // horn_standear 取代所有耳朵圖層
   if(activeLayers.has("horn_standear")){
@@ -634,29 +650,25 @@ function showResult(){
   const W = 400, H = 400;
   let svgLines = "";
   let labelDivs = "";
-  ANNO_DEFS.forEach((def, i) => {
+  ANNO_DEFS.forEach(function(def) {
     const result = partResults[def.prefix];
     if(!result) return;
-    const px = def.cx * W;  // 圖內點 x
-    const py = def.cy * H;  // 圖內點 y
-    // SVG viewBox 是 "-120 0 640 400"，所以左側延伸到 -120，右側到 520
-    const lx = def.side === "left" ? -80 : 480;  // 標籤錨點 x
+    const px = def.cx * W;
+    const py = def.cy * H;
+    const lx = def.side === "left" ? -80 : 480;
     const ly = py;
-    const mx = def.side === "left" ? -20 : 420;   // 折點 x
+    const mx = def.side === "left" ? -20 : 420;
     const color = "rgba(160,150,240,0.7)";
-    svgLines += \`<polyline points="\${px},\${py} \${mx},\${ly}" stroke="\${color}" stroke-width="1" fill="none"/>
-<circle cx="\${px}" cy="\${py}" r="3" fill="\${color}"/>
-<line x1="\${mx}" y1="\${ly}" x2="\${lx}" y2="\${ly}" stroke="\${color}" stroke-width="1"/>\`;
-    // label 位置：相對於 canvas-outer
-    // canvas-outer 的 SVG viewBox offset: 左側 -120，所以實際像素需換算
-    // SVG viewBox="-120 0 640 400" 顯示寬度=640，但元素寬=100%
-    // 用 style left/right 直接定位比較穩
+    svgLines += '<polyline points="' + px + ',' + py + ' ' + mx + ',' + ly + '" stroke="' + color + '" stroke-width="1" fill="none"/>';
+    svgLines += '<circle cx="' + px + '" cy="' + py + '" r="3" fill="' + color + '"/>';
+    svgLines += '<line x1="' + mx + '" y1="' + ly + '" x2="' + lx + '" y2="' + ly + '" stroke="' + color + '" stroke-width="1"/>';
+    const topPct = (py/H*100).toFixed(1) + "%";
     const labelStyle = def.side === "left"
-      ? \`right:calc(100% - 0px + 4px); top:\${(py/H*100).toFixed(1)}%; transform:translateY(-50%); text-align:right;\`
-      : \`left:calc(100% + 4px); top:\${(py/H*100).toFixed(1)}%; transform:translateY(-50%); text-align:left;\`;
-    labelDivs += \`<div class="anno-label" style="\${labelStyle}">\${partKeyMap[def.prefix]}<br><span style="color:var(--text);font-size:12px;">\${result}</span></div>\`;
+      ? "right:calc(100% + 8px); top:" + topPct + "; transform:translateY(-50%); text-align:right;"
+      : "left:calc(100% + 8px); top:" + topPct + "; transform:translateY(-50%); text-align:left;";
+    labelDivs += '<div class="anno-label" style="' + labelStyle + '">' + partKeyMap[def.prefix] + '<br><span style="color:var(--text);font-size:12px;">' + result + '</span></div>';
   });
-  const annoLabels = \`<svg class="anno-svg" id="anno-svg" viewBox="-120 0 640 400" xmlns="http://www.w3.org/2000/svg">\${svgLines}</svg>\${labelDivs}\`;
+  const annoLabels = '<svg viewBox="-120 0 640 400" xmlns="http://www.w3.org/2000/svg" style="position:absolute;top:0;left:0;width:100%;height:100%;overflow:visible;pointer-events:none;">' + svgLines + '</svg>' + labelDivs;
 
   document.getElementById("content").innerHTML=`
     <div class="result-block">
@@ -664,9 +676,10 @@ function showResult(){
       <div class="result-title">你的靈魂獸設</div>
       <div class="result-sub">由10個特質組合而成，獨一無二</div>
       <div class="canvas-outer" id="fursona-outer">
-        <div class="canvas-wrap" id="fursona-canvas">${imgs}</div>
-        <svg class="anno-svg" id="anno-svg" viewBox="-120 0 640 400" xmlns="http://www.w3.org/2000/svg"></svg>
-        ${annoLabels}
+        <div class="canvas-wrap" id="fursona-canvas" style="overflow:visible;">
+          <div style="position:absolute;top:0;left:0;width:100%;height:100%;overflow:hidden;border-radius:16px;">${imgs}</div>
+          ${annoLabels}
+        </div>
       </div>
       <div class="name-input-wrap">
         <label class="name-label">為你的靈魂獸設命名</label>
