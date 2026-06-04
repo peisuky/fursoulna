@@ -521,11 +521,22 @@ const LAYERS = {
   "ear_cat": "layers/ear_cat.png",
   "ear_deer": "layers/ear_deer.png",
   "ear_dog": "layers/ear_dog.png",
+  "eyebrow_1": "layers/eyebrow_1.png",
+  "eyebrow_2": "layers/eyebrow_2.png",
+  "eyebrow_3": "layers/eyebrow_3.png",
+  "eyebrow_4": "layers/eyebrow_4.png",
   "eye_lazy": "layers/eye_lazy.png",
   "eye_round": "layers/eye_round.png",
   "eye_shock": "layers/eye_shock.png",
   "eye_smile": "layers/eye_smile.png",
-  "head": "layers/head.png",
+  "hair_1": "layers/hair_1.png",
+  "hair_2": "layers/hair_2.png",
+  "hair_3": "layers/hair_3.png",
+  "hair_4": "layers/hair_4.png",
+  "head_1": "layers/head_1.png",
+  "head_2": "layers/head_2.png",
+  "head_3": "layers/head_3.png",
+  "head_4": "layers/head_4.png",
   "horn_bull": "layers/horn_bull.png",
   "horn_deer": "layers/horn_deer.png",
   "horn_standear": "layers/horn_standear.png",
@@ -538,7 +549,7 @@ const LAYERS = {
 };
 
 // 圖層顯示順序（底→頂），與PSD一致
-const LAYER_ORDER = ["tail_dog", "tail_bull", "tail_cat", "body", "horn_bull", "horn_deer", "head", "horn_standear", "ear_dog", "ear_cat", "ear_deer", "ear_bear", "eye_round", "eye_lazy", "eye_shock", "eye_smile", "nose_cat", "nose_bull", "nose_dog"];
+const LAYER_ORDER = ["tail_dog", "tail_bull", "tail_cat", "body", "horn_bull", "horn_deer", "head_1", "head_2", "head_3", "head_4", "horn_standear", "ear_dog", "ear_cat", "ear_deer", "ear_bear", "hair_1", "hair_2", "hair_3", "hair_4", "eye_round", "eye_lazy", "eye_shock", "eye_smile", "eyebrow_1", "eyebrow_2", "eyebrow_3", "eyebrow_4", "nose_cat", "nose_bull", "nose_dog"];
 
 const questions=[
   {part:"耳朵",icon:"👂",text:"朋友突然從背後叫你，你的反應是？",options:[
@@ -571,17 +582,17 @@ const questions=[
     {label:"默默觀察然後突然插嘴",result:"獸耳加強版",layer:"horn_standear"},
     {label:"跟著走就好",result:"無角",layer:null}
   ]},
-  {part:"體型",icon:"💪",text:"你面對壓力的方式？",options:[
-    {label:"正面剛，直接解決",result:"壯碩型",layer:null},
-    {label:"扛著不說，自己消化",result:"寬肩厚實型",layer:null},
-    {label:"快速分析然後行動",result:"精實型",layer:null},
-    {label:"先躲起來再說",result:"纖細型",layer:null}
+  {part:"頭型",icon:"💀",text:"你在一個陌生環境裡，最先做的事是？",options:[
+    {label:"找到出口和逃生路線",result:"圓頭",layer:"head_1"},
+    {label:"觀察有沒有認識的臉",result:"方頭",layer:"head_2"},
+    {label:"找個角落站定，看清楚再說",result:"寬頭",layer:"head_3"},
+    {label:"直接往人最多的地方走",result:"長頭",layer:"head_4"}
   ]},
-  {part:"手爪",icon:"🐾",text:"你喜歡的肢體接觸方式？",options:[
-    {label:"摸頭、拍肩、牽手都OK",result:"肉球爪",layer:null},
-    {label:"不太喜歡被碰，握手就好",result:"蹄感指節",layer:null},
-    {label:"熊抱派，用力才有感",result:"利爪",layer:null},
-    {label:"保持物理距離謝謝",result:"人手",layer:null}
+  {part:"眉毛",icon:"✏️",text:"別人第一次見到你，通常對你的印象是？",options:[
+    {label:"好說話、容易相處",result:"平眉",layer:"eyebrow_1"},
+    {label:"有點難以捉摸",result:"挑眉",layer:"eyebrow_2"},
+    {label:"感覺很可靠",result:"濃眉",layer:"eyebrow_3"},
+    {label:"看起來在想事情",result:"蹙眉",layer:"eyebrow_4"}
   ]},
   {part:"毛色",icon:"🎨",text:"你的房間或桌面風格？",options:[
     {label:"木質暖色、有點亂但有溫度",result:"暖棕／米色系",layer:null},
@@ -589,11 +600,11 @@ const questions=[
     {label:"黑白對比、乾淨俐落",result:"黑白色系",layer:null},
     {label:"繽紛花俏、貼紙到處貼",result:"繽紛花色",layer:null}
   ]},
-  {part:"花紋",icon:"✨",text:"你的穿衣風格？",options:[
-    {label:"小細節控，局部圖案點綴",result:"斑點紋",layer:null},
-    {label:"整體有型，喜歡線條感",result:"條紋／狼紋",layer:null},
-    {label:"素色為主，版型決定一切",result:"純色無紋",layer:null},
-    {label:"大面積花色，存在感強",result:"大塊花斑",layer:null}
+  {part:"髮型",icon:"💈",text:"你通常怎麼整理自己的狀態？",options:[
+    {label:"有固定的儀式或習慣",result:"整齊短髮",layer:"hair_1"},
+    {label:"看心情，有時候很在意有時候不管",result:"蓬鬆中髮",layer:"hair_2"},
+    {label:"能動就好，細節不重要",result:"野性長髮",layer:"hair_3"},
+    {label:"維持一個「夠用」的水準",result:"隨性碎髮",layer:"hair_4"}
   ]},
   {part:"配件",icon:"🔮",text:"你希望別人看到你的獸設時，第一印象是？",options:[
     {label:"可愛，讓人想靠近",result:"鈴鐺項圈",layer:null},
@@ -693,12 +704,13 @@ const TOUCH_TAG = ["高接觸耐受","低接觸偏好","物理衝擊派","物理
 const VIBE_TAG = ["暖色系棲地","冷調極簡","黑白對比控","繽紛感官"];
 
 function derivePersonality(parts){
-  const earIdx  = answers[0]; // 0-3
-  const hornIdx = answers[4]; // 0-3
-  const stressIdx = answers[5];
-  const senseIdx  = answers[3];
-  const touchIdx  = answers[6];
-  const vibeIdx   = answers[7];
+  const earIdx  = answers[0]; // Q1 耳朵
+  const hornIdx = answers[4]; // Q5 角
+  const headIdx = answers[5]; // Q6 頭型
+  const stressIdx = answers[7]; // Q8 毛色（空間風格）
+  const senseIdx  = answers[3]; // Q4 鼻子（感官）
+  const touchIdx  = answers[6]; // Q7 眉毛（外在印象）
+  const vibeIdx   = answers[9]; // Q10 配件（氛圍）
   const titleKey = earIdx+","+hornIdx;
   const title = TITLE_MAP[titleKey] || "未知原型";
   // 稀有度：全部選0或3算稀有，其他往下遞減
@@ -709,8 +721,7 @@ function derivePersonality(parts){
     {cls:"instinct",text: SENSE_TAG[senseIdx]},
     {cls:"stress",  text: TOUCH_TAG[touchIdx]},
     {cls:"vibe",    text: VIBE_TAG[vibeIdx]},
-  ];
-  return {title, rarityIdx, tags};
+  ];  return {title, rarityIdx, tags};
 }
 
 async function fetchPersonaDesc(parts){
@@ -741,7 +752,7 @@ function showResult(){
   }));
 
   // 收集這次選了哪些layer key
-  const activeLayers = new Set(["body","head"]);
+  const activeLayers = new Set(["body"]);
   parts.forEach(p=>{ if(p.layer) activeLayers.add(p.layer); });
   // horn_standear 取代所有耳朵圖層
   if(activeLayers.has("horn_standear")){
