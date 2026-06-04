@@ -344,7 +344,6 @@ body{
   width:100%;
   margin:0 auto 1.5rem;
   overflow:visible;
-  padding:0 90px;
   box-sizing:border-box;
 }
 .canvas-wrap{
@@ -383,6 +382,96 @@ body{
   letter-spacing:0.05em;
 }
 .restart-btn:hover{background:rgba(255,255,255,0.05);color:var(--text)}
+
+/* ======== PERSONALITY SUMMARY ======== */
+.persona-summary{
+  margin-bottom:1.5rem;
+  border:1px solid rgba(123,110,246,0.3);
+  border-radius:16px;
+  overflow:hidden;
+  background:linear-gradient(135deg, rgba(123,110,246,0.07) 0%, rgba(255,107,157,0.05) 100%);
+  position:relative;
+}
+.persona-summary::before{
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--accent),var(--accent3),transparent);
+  opacity:0.6;
+}
+.persona-header{
+  padding:16px 18px 10px;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+}
+.persona-type-code{
+  font-size:10px;
+  letter-spacing:0.2em;
+  color:var(--text2);
+  opacity:0.6;
+  text-transform:uppercase;
+  margin-bottom:4px;
+}
+.persona-title{
+  font-family:"Noto Serif TC",serif;
+  font-size:22px;
+  font-weight:700;
+  color:var(--text);
+  letter-spacing:0.06em;
+  text-shadow:0 0 16px var(--glow);
+  line-height:1.2;
+}
+.persona-rarity{
+  flex-shrink:0;
+  font-size:10px;
+  letter-spacing:0.12em;
+  color:var(--gold);
+  background:rgba(255,215,0,0.1);
+  border:1px solid rgba(255,215,0,0.25);
+  border-radius:4px;
+  padding:4px 8px;
+  text-transform:uppercase;
+  white-space:nowrap;
+}
+.persona-tags{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  padding:0 18px 14px;
+}
+.p-tag{
+  font-size:11px;
+  padding:4px 10px;
+  border-radius:99px;
+  letter-spacing:0.06em;
+  border:1px solid;
+}
+.p-tag.social{color:#A897FF;border-color:rgba(168,151,255,0.35);background:rgba(168,151,255,0.08)}
+.p-tag.instinct{color:#FF6B9D;border-color:rgba(255,107,157,0.35);background:rgba(255,107,157,0.08)}
+.p-tag.stress{color:#7BD4F5;border-color:rgba(123,212,245,0.35);background:rgba(123,212,245,0.08)}
+.p-tag.vibe{color:#B8F5A0;border-color:rgba(184,245,160,0.35);background:rgba(184,245,160,0.08)}
+.persona-divider{height:1px;background:rgba(123,110,246,0.15);margin:0 18px}
+.persona-desc{
+  padding:14px 18px 18px;
+  font-size:14px;
+  color:var(--text2);
+  line-height:1.9;
+  letter-spacing:0.03em;
+}
+.persona-desc strong{color:var(--accent2)}
+/* skeleton loading */
+.skel{
+  background:linear-gradient(90deg,rgba(255,255,255,0.04) 25%,rgba(255,255,255,0.09) 50%,rgba(255,255,255,0.04) 75%);
+  background-size:200% 100%;
+  animation:skelShimmer 1.4s ease-in-out infinite;
+  border-radius:6px;
+  height:14px;
+  margin-bottom:8px;
+}
+@keyframes skelShimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
 .name-input-wrap{margin-bottom:1.5rem}
 .name-label{font-size:12px;color:var(--text2);display:block;margin-bottom:6px;text-align:center;letter-spacing:0.06em}
 .name-input{
@@ -432,22 +521,11 @@ const LAYERS = {
   "ear_cat": "layers/ear_cat.png",
   "ear_deer": "layers/ear_deer.png",
   "ear_dog": "layers/ear_dog.png",
-  "eyebrow_1": "layers/eyebrow_1.png",
-  "eyebrow_2": "layers/eyebrow_2.png",
-  "eyebrow_3": "layers/eyebrow_3.png",
-  "eyebrow_4": "layers/eyebrow_4.png",
   "eye_lazy": "layers/eye_lazy.png",
   "eye_round": "layers/eye_round.png",
   "eye_shock": "layers/eye_shock.png",
   "eye_smile": "layers/eye_smile.png",
-  "hair_1": "layers/hair_1.png",
-  "hair_2": "layers/hair_2.png",
-  "hair_3": "layers/hair_3.png",
-  "hair_4": "layers/hair_4.png",
-  "head_1": "layers/head_1.png",
-  "head_2": "layers/head_2.png",
-  "head_3": "layers/head_3.png",
-  "head_4": "layers/head_4.png",
+  "head": "layers/head.png",
   "horn_bull": "layers/horn_bull.png",
   "horn_deer": "layers/horn_deer.png",
   "horn_standear": "layers/horn_standear.png",
@@ -460,7 +538,7 @@ const LAYERS = {
 };
 
 // 圖層顯示順序（底→頂），與PSD一致
-const LAYER_ORDER = ["tail_dog", "tail_bull", "tail_cat", "body", "horn_bull", "horn_deer", "head_1", "head_2", "head_3", "head_4", "horn_standear", "ear_dog", "ear_cat", "ear_deer", "ear_bear", "eye_round", "eye_lazy", "eye_shock", "eye_smile", "eyebrow_1", "eyebrow_2", "eyebrow_3", "eyebrow_4", "nose_cat", "nose_bull", "nose_dog", "hair_1", "hair_2", "hair_3", "hair_4"];
+const LAYER_ORDER = ["tail_dog", "tail_bull", "tail_cat", "body", "horn_bull", "horn_deer", "head", "horn_standear", "ear_dog", "ear_cat", "ear_deer", "ear_bear", "eye_round", "eye_lazy", "eye_shock", "eye_smile", "nose_cat", "nose_bull", "nose_dog"];
 
 const questions=[
   {part:"耳朵",icon:"👂",text:"朋友突然從背後叫你，你的反應是？",options:[
@@ -493,23 +571,23 @@ const questions=[
     {label:"默默觀察然後突然插嘴",result:"獸耳加強版",layer:"horn_standear"},
     {label:"跟著走就好",result:"無角",layer:null}
   ]},
-  {part:"頭型",icon:"💀",text:"你給陌生人的第一印象通常是？",options:[
-    {label:"乾淨、不多話，讓人猜不透",result:"光滑圓頭",layer:"head_1"},
-    {label:"有點混亂、但莫名有魅力",result:"炸毛鋸齒頭",layer:"head_2"},
-    {label:"親切、帶點隨意的可愛感",result:"圓頭碎毛",layer:"head_3"},
-    {label:"有點痞、帶點江湖氣",result:"鬢角型",layer:"head_4"}
+  {part:"體型",icon:"💪",text:"你面對壓力的方式？",options:[
+    {label:"正面剛，直接解決",result:"壯碩型",layer:null},
+    {label:"扛著不說，自己消化",result:"寬肩厚實型",layer:null},
+    {label:"快速分析然後行動",result:"精實型",layer:null},
+    {label:"先躲起來再說",result:"纖細型",layer:null}
   ]},
-  {part:"髮型",icon:"💇",text:"你現在的能量狀態比較接近哪個？",options:[
-    {label:"還好，維持在日常水位",result:"側邊亂毛",layer:"hair_1"},
-    {label:"超高，什麼都想衝",result:"爆炸尖刺",layer:"hair_2"},
-    {label:"低電量，能省則省",result:"極短一撮",layer:"hair_3"},
-    {label:"外表平靜，內心有根刺",result:"呆毛",layer:"hair_4"}
+  {part:"手爪",icon:"🐾",text:"你喜歡的肢體接觸方式？",options:[
+    {label:"摸頭、拍肩、牽手都OK",result:"肉球爪",layer:null},
+    {label:"不太喜歡被碰，握手就好",result:"蹄感指節",layer:null},
+    {label:"熊抱派，用力才有感",result:"利爪",layer:null},
+    {label:"保持物理距離謝謝",result:"人手",layer:null}
   ]},
-  {part:"眉型",icon:"🫤",text:"朋友跟你說了一件很扯的事，你的第一反應是？",options:[
-    {label:"「你認真的？」語氣強硬，直接質問",result:"粗斜眉",layer:"eyebrow_1"},
-    {label:"沉默三秒，用眼神表達一切",result:"細尖眉",layer:"eyebrow_2"},
-    {label:"「喔～這樣啊」，聽完再說",result:"平緩細眉",layer:"eyebrow_3"},
-    {label:"「等等……這是真的嗎？」半信半疑",result:"挑眉",layer:"eyebrow_4"}
+  {part:"毛色",icon:"🎨",text:"你的房間或桌面風格？",options:[
+    {label:"木質暖色、有點亂但有溫度",result:"暖棕／米色系",layer:null},
+    {label:"深色冷調、極簡",result:"冷灰／藍色系",layer:null},
+    {label:"黑白對比、乾淨俐落",result:"黑白色系",layer:null},
+    {label:"繽紛花俏、貼紙到處貼",result:"繽紛花色",layer:null}
   ]},
   {part:"花紋",icon:"✨",text:"你的穿衣風格？",options:[
     {label:"小細節控，局部圖案點綴",result:"斑點紋",layer:null},
@@ -600,6 +678,59 @@ function selectOpt(i){
 }
 function prev(){if(current>0){current--;render();}}
 
+// ======== PERSONALITY ENGINE ========
+const TITLE_MAP = {
+  // [ear_idx][horn_idx] → 稱號
+  "0,0":"追蹤者獵手","0,1":"群落先鋒","0,2":"潛行者","0,3":"忠誠斥候",
+  "1,0":"孤月觀察者","1,1":"冷調定錨","1,2":"影中術士","1,3":"無聲漫遊",
+  "2,0":"霧中斥候","2,1":"節奏掌控者","2,2":"遲醒野靈","2,3":"林間迷途",
+  "3,0":"暖巢守護者","3,1":"沉靜司儀","3,2":"夢境留守","3,3":"歸巢者"
+};
+const RARITY = ["稀有","罕見","少見","普通"];
+const STRESS_TAG = ["正面強衝型","內斂消化型","冷靜分析型","迴避型"];
+const SENSE_TAG = ["嗅覺優先","視覺優先","觸感優先","社交感知"];
+const TOUCH_TAG = ["高接觸耐受","低接觸偏好","物理衝擊派","物理迴避"];
+const VIBE_TAG = ["暖色系棲地","冷調極簡","黑白對比控","繽紛感官"];
+
+function derivePersonality(parts){
+  const earIdx  = answers[0]; // 0-3
+  const hornIdx = answers[4]; // 0-3
+  const stressIdx = answers[5];
+  const senseIdx  = answers[3];
+  const touchIdx  = answers[6];
+  const vibeIdx   = answers[7];
+  const titleKey = earIdx+","+hornIdx;
+  const title = TITLE_MAP[titleKey] || "未知原型";
+  // 稀有度：全部選0或3算稀有，其他往下遞減
+  const extremeCount = answers.filter(a=>a===0||a===3).length;
+  const rarityIdx = extremeCount>=7?0:extremeCount>=4?1:extremeCount>=2?2:3;
+  const tags = [
+    {cls:"social",  text: STRESS_TAG[stressIdx]},
+    {cls:"instinct",text: SENSE_TAG[senseIdx]},
+    {cls:"stress",  text: TOUCH_TAG[touchIdx]},
+    {cls:"vibe",    text: VIBE_TAG[vibeIdx]},
+  ];
+  return {title, rarityIdx, tags};
+}
+
+async function fetchPersonaDesc(parts){
+  const summary = parts.map(p=>`${p.part}：${p.chosen}（${p.result}）`).join("、");
+  const prompt = `你是一個獸設人格分析師。根據以下測驗結果，用繁體中文寫出2到3句話的人格描述，語氣神秘而有詩意，像在描述一個角色的靈魂核心。不要列點，不要解釋，直接輸出描述本文，字數控制在60至90字之間。可以用「你」稱呼對方。結果：${summary}`;
+  try{
+    const resp = await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        model:"claude-sonnet-4-20250514",
+        max_tokens:200,
+        messages:[{role:"user",content:prompt}]
+      })
+    });
+    const data = await resp.json();
+    return data.content?.[0]?.text || null;
+  }catch(e){return null;}
+}
+
 function showResult(){
   document.getElementById("progress").style.width="100%";
   const parts=questions.map((q,i)=>({
@@ -610,7 +741,7 @@ function showResult(){
   }));
 
   // 收集這次選了哪些layer key
-  const activeLayers = new Set(["body"]);
+  const activeLayers = new Set(["body","head"]);
   parts.forEach(p=>{ if(p.layer) activeLayers.add(p.layer); });
   // horn_standear 取代所有耳朵圖層
   if(activeLayers.has("horn_standear")){
@@ -626,49 +757,12 @@ function showResult(){
     .map(k => LAYERS[k] ? `<img src="${LAYERS[k]}" alt="${k}">` : "")
     .join("");
 
-  // 拉線標示設定：[部位key前綴, canvas內的x%, y%, 標示在左or右]
-  const ANNO_DEFS = [
-    { prefix:"horn",  side:"right", cx:0.72, cy:0.12 },
-    { prefix:"ear",   side:"right", cx:0.76, cy:0.22 },
-    { prefix:"eye",   side:"left",  cx:0.28, cy:0.28 },
-    { prefix:"nose",  side:"left",  cx:0.30, cy:0.38 },
-    { prefix:"tail",  side:"right", cx:0.62, cy:0.72 },
-  ];
-  const partKeyMap = { horn:"角", ear:"耳朵", eye:"眼睛", nose:"鼻子", tail:"尾巴" };
+  const annoLabels = "";
 
-  // 為每個部位找 result 文字
-  const partResults = {};
-  parts.forEach(p => {
-    if(p.part==="角")   partResults["horn"] = p.result;
-    if(p.part==="耳朵") partResults["ear"]  = p.result;
-    if(p.part==="眼睛") partResults["eye"]  = p.result;
-    if(p.part==="鼻子") partResults["nose"] = p.result;
-    if(p.part==="尾巴") partResults["tail"] = p.result;
-  });
-
-  // 產生 SVG 線 + HTML 標籤
-  const W = 400, H = 400;
-  let svgLines = "";
-  let labelDivs = "";
-  ANNO_DEFS.forEach(function(def) {
-    const result = partResults[def.prefix];
-    if(!result) return;
-    const px = def.cx * W;
-    const py = def.cy * H;
-    const lx = def.side === "left" ? -80 : 480;
-    const ly = py;
-    const mx = def.side === "left" ? -20 : 420;
-    const color = "rgba(160,150,240,0.7)";
-    svgLines += '<polyline points="' + px + ',' + py + ' ' + mx + ',' + ly + '" stroke="' + color + '" stroke-width="1" fill="none"/>';
-    svgLines += '<circle cx="' + px + '" cy="' + py + '" r="3" fill="' + color + '"/>';
-    svgLines += '<line x1="' + mx + '" y1="' + ly + '" x2="' + lx + '" y2="' + ly + '" stroke="' + color + '" stroke-width="1"/>';
-    const topPct = (py/H*100).toFixed(1) + "%";
-    const labelStyle = def.side === "left"
-      ? "right:calc(100% + 8px); top:" + topPct + "; transform:translateY(-50%); text-align:right;"
-      : "left:calc(100% + 8px); top:" + topPct + "; transform:translateY(-50%); text-align:left;";
-    labelDivs += '<div class="anno-label" style="' + labelStyle + '">' + partKeyMap[def.prefix] + '<br><span style="color:var(--text);font-size:12px;">' + result + '</span></div>';
-  });
-  const annoLabels = '<svg viewBox="-120 0 640 400" xmlns="http://www.w3.org/2000/svg" style="position:absolute;top:0;left:0;width:100%;height:100%;overflow:visible;pointer-events:none;">' + svgLines + '</svg>' + labelDivs;
+  // ── derive personality ──
+  const persona = derivePersonality(parts);
+  const tagHtml = persona.tags.map(t=>`<span class="p-tag ${t.cls}">${t.text}</span>`).join("");
+  const typeCode = "TYPE · "+["EAR","TAIL","EYE","NOSE","HORN"].map((_,i)=>answers[i]).join("-");
 
   document.getElementById("content").innerHTML=`
     <div class="result-block">
@@ -681,6 +775,24 @@ function showResult(){
           ${annoLabels}
         </div>
       </div>
+
+      <div class="persona-summary">
+        <div class="persona-header">
+          <div>
+            <div class="persona-type-code">${typeCode}</div>
+            <div class="persona-title">${persona.title}</div>
+          </div>
+          <div class="persona-rarity">${["✦ RARE","◈ UNCOMMON","○ UNCOMMON","· COMMON"][persona.rarityIdx]}</div>
+        </div>
+        <div class="persona-tags">${tagHtml}</div>
+        <div class="persona-divider"></div>
+        <div class="persona-desc" id="persona-desc-text">
+          <div class="skel" style="width:90%"></div>
+          <div class="skel" style="width:75%"></div>
+          <div class="skel" style="width:60%"></div>
+        </div>
+      </div>
+
       <div class="name-input-wrap">
         <label class="name-label">為你的靈魂獸設命名</label>
         <input class="name-input" id="fursona-name" type="text" placeholder="輸入名字（選填）" maxlength="20">
@@ -700,8 +812,21 @@ function showResult(){
       </div>
       <button class="restart-btn" onclick="restart()">↺ 再測一次</button>
     </div>`;
-  // store parts for share
   window._resultParts = parts;
+  window._personaTitle = persona.title;
+
+  // async fetch description
+  fetchPersonaDesc(parts).then(desc=>{
+    const el = document.getElementById("persona-desc-text");
+    if(!el) return;
+    if(desc){
+      // bold any quoted or emphasized phrases
+      const formatted = desc.replace(/「([^」]+)」/g,'<strong>「$1」</strong>');
+      el.innerHTML = formatted;
+    } else {
+      el.innerHTML = `<span style="opacity:0.5;font-size:13px">（描述生成失敗，請檢查網路連線）</span>`;
+    }
+  });
 }
 
 function saveImage(){
@@ -743,9 +868,11 @@ function saveImage(){
 function copyShareText(){
   const name = (document.getElementById("fursona-name")||{}).value||"";
   const parts = window._resultParts||[];
+  const title = window._personaTitle||"";
   const lines = parts.map(p=>`${p.icon} ${p.part}：${p.result}`).join("\n");
   const header = name ? `【${name} 的靈魂獸設調色盤】` : "【我的靈魂獸設調色盤】";
-  const text = `${header}\n${lines}\n\n#靈魂獸設調色盤 #Furry #FurryArt`;
+  const titleLine = title ? `原型：${title}\n` : "";
+  const text = `${header}\n${titleLine}${lines}\n\n#靈魂獸設調色盤 #Furry #FurryArt`;
   navigator.clipboard.writeText(text).then(()=>{
     const btn = document.querySelector(".share-btn");
     const orig = btn.textContent;
