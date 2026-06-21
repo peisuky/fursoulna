@@ -625,7 +625,7 @@ const questions=[
   ]}
 ];
 
-let current=0,answers=[],introShown=false;
+let current=0,answers=[],introShown=false,userName="";
 
 function showIntro(){
   document.getElementById("progress").style.width="0%";
@@ -652,6 +652,10 @@ function showIntro(){
         <span class="eq-op">=</span>
         <span class="eq-item"><span class="eq-num">∞</span><span class="eq-label">種組合</span></span>
       </div>
+      <div class="name-input-wrap">
+        <label class="name-label">為你的靈魂獸設命名（選填）</label>
+        <input class="name-input" id="user-name-input" type="text" placeholder="輸入名字" maxlength="20">
+      </div>
       <button class="start-btn" onclick="startQuiz()">▶ &nbsp; 調色開始</button>
       <div class="start-hint">選擇直覺反應，不必過度思考</div>
       <button class="test-btn" onclick="randomTest()">🎲 隨機測試（跳至結果）</button>
@@ -659,6 +663,7 @@ function showIntro(){
 }
 
 function startQuiz(){
+  userName=(document.getElementById("user-name-input")||{}).value||"";
   introShown=true;
   render();
 }
@@ -785,48 +790,16 @@ function showResult(){
     activeLayers.delete("ear_bear");
   }
 
-  // 依照PSD順序（底→頂）過濾出要顯示的圖層
-  const imgs = LAYER_ORDER
-    .filter(k => activeLayers.has(k))
-    .map(k => LAYERS[k] ? `<img src="${LAYERS[k]}" alt="${k}">` : "")
-    .join("");
-
-  const annoLabels = "";
-
-  // ── derive personality ──
+  const layerKeys = LAYER_ORDER.filter(k => activeLayers.has(k));
   const persona = derivePersonality(parts);
-  const tagHtml = persona.tags.map(t=>`<span class="p-tag ${t.cls}">${t.text}</span>`).join("");
-  const typeCode = "TYPE · "+["EAR","TAIL","EYE","NOSE","HORN"].map((_,i)=>answers[i]).join("-");
+  const desc = fetchPersonaDesc();
+  const typeCode = "TYPE · "+answers.slice(0,5).join("-");
 
   document.getElementById("content").innerHTML=`
     <div class="result-block">
       <div class="cert-label">FurSOULna CERTIFICATE</div>
-      <div class="result-title">你的靈魂獸設</div>
-      <div class="result-sub">由10個特質組合而成，獨一無二</div>
-      <div class="canvas-outer" id="fursona-outer">
-        <div class="canvas-wrap" id="fursona-canvas" style="overflow:visible;">
-          <div style="position:absolute;top:0;left:0;width:100%;height:100%;overflow:hidden;border-radius:16px;">${imgs}</div>
-          ${annoLabels}
-        </div>
-      </div>
-
-      <div class="persona-summary">
-        <div class="persona-header">
-          <div>
-            <div class="persona-type-code">${typeCode}</div>
-            <div class="persona-title">${persona.title}</div>
-          </div>
-          <div class="persona-rarity">${["✦ RARE","◈ UNCOMMON","○ UNCOMMON","· COMMON"][persona.rarityIdx]}</div>
-        </div>
-        <div class="persona-tags">${tagHtml}</div>
-        <div class="persona-divider"></div>
-        <div class="persona-desc" id="persona-desc-text"></div>
-      </div>
-
-      <div class="name-input-wrap">
-        <label class="name-label">為你的靈魂獸設命名</label>
-        <input class="name-input" id="fursona-name" type="text" placeholder="輸入名字（選填）" maxlength="20">
-      </div>
+      <div class="result-sub" style="text-align:center;margin-bottom:1.2rem">由10個特質組合而成，獨一無二</div>
+      <canvas id="share-card-canvas" width="600" height="460" style="width:100%;border-radius:12px;display:block;margin:0 auto 1.5rem;box-shadow:0 0 30px rgba(123,110,246,0.2)"></canvas>
       <div class="action-row">
         <button class="save-btn" onclick="saveImage()">⬇ 儲存圖片</button>
         <button class="share-btn copy-link-btn" onclick="copyLink()">🔗 複製連結</button>
@@ -842,28 +815,25 @@ function showResult(){
       </div>
       <button class="restart-btn" onclick="restart()">↺ 再測一次</button>
     </div>`;
-  window._resultParts = parts;
-  window._personaTitle = persona.title;
 
-  // 靜態人格描述
-  const desc = fetchPersonaDesc();
-  const el = document.getElementById("persona-desc-text");
-  if(el){
-    const formatted = desc.replace(/「([^」]+)」/g,'<strong>「$1」</strong>');
-    el.innerHTML = formatted;
-  }
+  drawShareCard(layerKeys, persona, desc, typeCode);
 }
 
 function saveImage(){
-  const wrap = document.getElementById("fursona-canvas");
-  const name = (document.getElementById("fursona-name")||{}).value||"";
-  const persona = derivePersonality([]);
-  const desc = fetchPersonaDesc();
-  const typeCode = "TYPE · "+answers.slice(0,5).join("-");
-  const W=900,H=490,topH=310;
-  const canvas=document.createElement("canvas");
-  canvas.width=W; canvas.height=H;
-  const ctx=canvas.getContext("2d");
+  const canvas = document.getElementById("share-card-canvas");
+  if(!canvas) return;
+  const a = document.createElement("a");
+  a.download = (userName||"fursona")+"_card.png";
+  a.href = canvas.toDataURL("image/png");
+  a.click();
+}
+
+function drawShareCard(layerKeys, persona, desc, typeCode){
+  const canvas = document.getElementById("share-card-canvas");
+  if(!canvas) return;
+  const ctx = canvas.getContext("2d");
+  const name = userName;
+  const W=600,H=460,topH=290;
 
   function rr(x,y,w,h,r){
     ctx.beginPath();
@@ -882,91 +852,82 @@ function saveImage(){
     if(line)ctx.fillText(line,x,y);
   }
 
-  function drawCard(){
+  function renderCard(imgList){
     ctx.save();
     rr(0,0,W,H,20); ctx.clip();
 
-    // background
     ctx.fillStyle="#0d0b1a"; ctx.fillRect(0,0,W,H);
     const grd=ctx.createLinearGradient(0,0,W,topH);
     grd.addColorStop(0,"#16122a"); grd.addColorStop(1,"#1e1938");
     ctx.fillStyle=grd; ctx.fillRect(0,0,W,topH);
 
-    // character image 256x256
-    const IS=256,IX=32,IY=(topH-IS)/2|0;
+    const IS=256,IX=28,IY=(topH-IS)/2|0;
     ctx.save();
     rr(IX,IY,IS,IS,12); ctx.clip();
-    const imgs=wrap.querySelectorAll("img");
-    imgs.forEach(img=>ctx.drawImage(img,IX,IY,IS,IS));
+    imgList.forEach(img=>ctx.drawImage(img,IX,IY,IS,IS));
     ctx.restore();
     ctx.strokeStyle="#2e2760"; ctx.lineWidth=1;
     rr(IX,IY,IS,IS,12); ctx.stroke();
 
-    // right panel
-    const TX=IX+IS+24,TW=W-TX-32;
-    let TY=IY+4;
+    const TX=IX+IS+18,TW=W-TX-22;
+    let TY=IY+2;
 
-    ctx.font="11px sans-serif"; ctx.fillStyle="rgba(160,156,200,0.5)";
-    ctx.fillText("FURSONA NAME",TX,TY+11); TY+=28;
+    ctx.font="15px sans-serif"; ctx.fillStyle="rgba(160,156,200,0.5)";
+    ctx.fillText("FURSONA NAME",TX,TY+14); TY+=32;
 
-    ctx.font="bold 26px 'Noto Serif TC',serif"; ctx.fillStyle="#e8e3ff";
-    ctx.fillText(name||"未命名",TX,TY+24); TY+=44;
+    ctx.font="bold 34px 'Noto Serif TC',serif"; ctx.fillStyle="#e8e3ff";
+    ctx.fillText(name||"未命名",TX,TY+32); TY+=52;
 
-    ctx.font="10px sans-serif"; ctx.fillStyle="rgba(160,156,200,0.4)";
-    ctx.fillText(typeCode,TX,TY+10); TY+=22;
+    ctx.font="14px sans-serif"; ctx.fillStyle="rgba(160,156,200,0.4)";
+    ctx.fillText(typeCode,TX,TY+13); TY+=26;
 
-    ctx.font="bold 15px 'Noto Serif TC',serif"; ctx.fillStyle="#A897FF";
-    ctx.fillText(persona.title,TX,TY+14); TY+=28;
+    ctx.font="bold 21px 'Noto Serif TC',serif"; ctx.fillStyle="#A897FF";
+    ctx.fillText(persona.title,TX,TY+18); TY+=32;
 
     const rTxt=["✦ RARE","◈ UNCOMMON","○ UNCOMMON","· COMMON"][persona.rarityIdx];
-    ctx.font="9px sans-serif";
+    ctx.font="14px sans-serif";
     const bw=ctx.measureText(rTxt).width+16;
-    ctx.fillStyle="rgba(255,215,0,0.1)"; rr(TX,TY,bw,20,4); ctx.fill();
-    ctx.strokeStyle="rgba(255,215,0,0.25)"; ctx.lineWidth=1; rr(TX,TY,bw,20,4); ctx.stroke();
-    ctx.fillStyle="#FFD700"; ctx.fillText(rTxt,TX+8,TY+13); TY+=32;
+    ctx.fillStyle="rgba(255,215,0,0.1)"; rr(TX,TY,bw,24,4); ctx.fill();
+    ctx.strokeStyle="rgba(255,215,0,0.25)"; ctx.lineWidth=1; rr(TX,TY,bw,24,4); ctx.stroke();
+    ctx.fillStyle="#FFD700"; ctx.fillText(rTxt,TX+8,TY+17); TY+=34;
 
-    // tags 2x2
     const COLS=["#A897FF","#FF6B9D","#7BD4F5","#B8F5A0"];
     const BGS=["rgba(168,151,255,0.08)","rgba(255,107,157,0.08)","rgba(123,212,245,0.08)","rgba(184,245,160,0.08)"];
     const BDS=["rgba(168,151,255,0.35)","rgba(255,107,157,0.35)","rgba(123,212,245,0.35)","rgba(184,245,160,0.35)"];
-    const tagW=(TW-8)/2,tagH=24,tagR=tagH/2;
-    ctx.font="11px sans-serif";
+    const tagW=(TW-8)/2,tagH=26,tagR=tagH/2;
+    ctx.font="15px sans-serif";
     persona.tags.forEach((tag,i)=>{
       const tx=TX+(i%2)*(tagW+8),ty=TY+Math.floor(i/2)*(tagH+6);
       ctx.fillStyle=BGS[i]; rr(tx,ty,tagW,tagH,tagR); ctx.fill();
       ctx.strokeStyle=BDS[i]; ctx.lineWidth=1; rr(tx,ty,tagW,tagH,tagR); ctx.stroke();
       ctx.fillStyle=COLS[i]; ctx.textAlign="center";
-      ctx.fillText(tag.text,tx+tagW/2,ty+16); ctx.textAlign="left";
+      ctx.fillText(tag.text,tx+tagW/2,ty+17); ctx.textAlign="left";
     });
 
-    // divider
     ctx.strokeStyle="rgba(46,39,96,0.6)"; ctx.lineWidth=1;
-    ctx.beginPath(); ctx.moveTo(32,topH); ctx.lineTo(W-32,topH); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(28,topH); ctx.lineTo(W-28,topH); ctx.stroke();
 
-    // description
-    ctx.font="14px 'Zen Kaku Gothic New',sans-serif"; ctx.fillStyle="#a09cc8";
-    wrapText(desc,32,topH+30,W-64,26);
+    ctx.font="18px 'Zen Kaku Gothic New',sans-serif"; ctx.fillStyle="#a09cc8";
+    wrapText(desc,28,topH+30,W-56,26);
 
-    // hashtags
-    ctx.font="11px sans-serif"; ctx.fillStyle="#7B6EF6";
-    ctx.fillText("#靈魂獸設調色盤  #FurSOULna  #Furry  #FurryArt",32,H-44);
+    ctx.font="15px sans-serif"; ctx.fillStyle="#7B6EF6";
+    ctx.fillText("#靈魂獸設調色盤  #FurSOULna  #Furry  #FurryArt",28,H-36);
 
-    // watermark
-    ctx.font="10px sans-serif"; ctx.fillStyle="rgba(160,156,200,0.35)";
-    ctx.textAlign="right"; ctx.fillText("made by Peisuky",W-16,H-18); ctx.textAlign="left";
+    ctx.font="13px sans-serif"; ctx.fillStyle="rgba(160,156,200,0.35)";
+    ctx.textAlign="right"; ctx.fillText("made by Peisuky",W-16,H-16); ctx.textAlign="left";
 
     ctx.restore();
-    const a=document.createElement("a");
-    a.download=(name||"fursona")+"_card.png";
-    a.href=canvas.toDataURL("image/png"); a.click();
   }
 
-  const imgs=wrap.querySelectorAll("img");
-  if(imgs.length===0){drawCard();return;}
+  if(layerKeys.length===0){renderCard([]);return;}
+  const imgList=layerKeys.map(k=>{const img=new Image();img.src=LAYERS[k];return img;});
   let loaded=0;
-  imgs.forEach(img=>{
-    if(img.complete){loaded++;if(loaded===imgs.length)drawCard();}
-    else{img.onload=()=>{loaded++;if(loaded===imgs.length)drawCard();};}
+  imgList.forEach(img=>{
+    if(img.complete&&img.naturalWidth>0){loaded++;if(loaded===imgList.length)renderCard(imgList);}
+    else{
+      img.onload=()=>{loaded++;if(loaded===imgList.length)renderCard(imgList);};
+      img.onerror=()=>{loaded++;if(loaded===imgList.length)renderCard(imgList);};
+    }
   });
 }
 
