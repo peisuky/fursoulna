@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>OG Image Generator</title>
+<style>
+body{margin:0;background:#0d0b1a;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:20px;font-family:sans-serif}
+canvas{border-radius:8px;max-width:100%;box-shadow:0 0 40px rgba(123,110,246,0.3)}
+button{padding:12px 32px;background:#7B6EF6;color:#fff;border:none;border-radius:8px;font-size:16px;cursor:pointer}
+button:hover{background:#A897FF}
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&family=Zen+Kaku+Gothic+New:wght@300;400&display=swap" rel="stylesheet">
+</head>
+<body>
+<canvas id="og" width="1200" height="630"></canvas>
+<button onclick="download()">⬇ 下載 og-image.png</button>
+<script>
+const c=document.getElementById("og"),ctx=c.getContext("2d");
+const W=1200,H=630;
+
+function draw(){
+  ctx.fillStyle="#0d0b1a";ctx.fillRect(0,0,W,H);
+  const g1=ctx.createRadialGradient(300,315,0,300,315,500);
+  g1.addColorStop(0,"rgba(123,110,246,0.18)");g1.addColorStop(1,"transparent");
+  ctx.fillStyle=g1;ctx.fillRect(0,0,W,H);
+  const g2=ctx.createRadialGradient(950,150,0,950,150,400);
+  g2.addColorStop(0,"rgba(168,151,255,0.12)");g2.addColorStop(1,"transparent");
+  ctx.fillStyle=g2;ctx.fillRect(0,0,W,H);
+  const g3=ctx.createRadialGradient(600,630,0,600,630,350);
+  g3.addColorStop(0,"rgba(255,107,157,0.08)");g3.addColorStop(1,"transparent");
+  ctx.fillStyle=g3;ctx.fillRect(0,0,W,H);
+
+  [[80,80,3,0.3],[120,200,2,0.2],[60,400,4,0.15],[200,550,2,0.25],
+   [1120,100,3,0.3],[1050,300,2,0.2],[1150,480,4,0.15],[980,580,2,0.25],
+   [400,60,2,0.2],[750,580,3,0.2],[900,40,2,0.15]].forEach(([x,y,r,a])=>{
+    ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);
+    ctx.fillStyle="rgba(123,110,246,"+a+")";ctx.fill();
+  });
+
+  ctx.strokeStyle="rgba(123,110,246,0.1)";ctx.lineWidth=1;
+  for(let i=0;i<6;i++){
+    ctx.beginPath();ctx.arc(600,315,120+i*55,0,Math.PI*2);ctx.stroke();
+  }
+
+  ctx.font="500 22px 'Noto Serif TC',serif";ctx.fillStyle="rgba(168,151,255,0.6)";
+  ctx.textAlign="center";ctx.fillText("✦  FURSONA CREATION  ✦",600,118);
+
+  ctx.font="bold 96px 'Noto Serif TC',serif";ctx.fillStyle="#e8e3ff";
+  ctx.textAlign="center";ctx.fillText("靈魂獸設",600,238);
+
+  ctx.font="bold 96px 'Noto Serif TC',serif";ctx.fillStyle="#A897FF";
+  ctx.textAlign="center";ctx.fillText("調色盤",600,338);
+
+  ctx.strokeStyle="rgba(123,110,246,0.4)";ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(400,368);ctx.lineTo(800,368);ctx.stroke();
+
+  ctx.font="300 28px 'Zen Kaku Gothic New',sans-serif";ctx.fillStyle="rgba(160,156,200,0.7)";
+  ctx.textAlign="center";ctx.fillText("FurSOULna Palette",600,408);
+
+  ctx.font="18px 'Zen Kaku Gothic New',sans-serif";ctx.fillStyle="rgba(123,110,246,0.5)";
+  ctx.textAlign="center";ctx.fillText("回答10個問題，生成你的專屬靈魂獸設與人格調色盤",600,458);
+
+  function roundRect(x,y,w,h,r){
+    ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);
+    ctx.quadraticCurveTo(x+w,y,x+w,y+r);ctx.lineTo(x+w,y+h-r);
+    ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);
+    ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);
+    ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();
+  }
+
+  const tags=[["✦ MYTHIC","rgba(255,215,0,0.12)","rgba(255,215,0,0.5)","#FFD700"],
+              ["◈ EPIC","rgba(168,151,255,0.12)","rgba(168,151,255,0.5)","#A897FF"],
+              ["○ RARE","rgba(255,107,157,0.12)","rgba(255,107,157,0.5)","#FF6B9D"],
+              ["· UNCOMMON","rgba(123,212,245,0.12)","rgba(123,212,245,0.5)","#7BD4F5"]];
+  const tw=130,th=34,gap=14;
+  const totalW=tags.length*(tw+gap)-gap;
+  let tx=(W-totalW)/2;
+  tags.forEach(([label,bg,border,col])=>{
+    ctx.fillStyle=bg;roundRect(tx,488,tw,th,th/2);ctx.fill();
+    ctx.strokeStyle=border;ctx.lineWidth=1;roundRect(tx,488,tw,th,th/2);ctx.stroke();
+    ctx.font="bold 13px sans-serif";ctx.fillStyle=col;ctx.textAlign="center";
+    ctx.fillText(label,tx+tw/2,488+22);
+    tx+=tw+gap;
+  });
+
+  ctx.font="13px sans-serif";ctx.fillStyle="rgba(160,156,200,0.3)";
+  ctx.textAlign="right";ctx.fillText("by Peisuky",W-40,H-20);
+}
+
+function download(){
+  const a=document.createElement("a");
+  a.download="og-image.png";
+  a.href=c.toDataURL("image/png");
+  a.click();
+}
+
+document.fonts.ready.then(draw);
+</script>
+</body>
+</html>
