@@ -843,4 +843,160 @@ function showResult(){
       <button class="restart-btn" onclick="restart()">↺ 再測一次</button>
     </div>`;
   window._resultParts = parts;
-  win
+  window._personaTitle = persona.title;
+
+  // 靜態人格描述
+  const desc = fetchPersonaDesc();
+  const el = document.getElementById("persona-desc-text");
+  if(el){
+    const formatted = desc.replace(/「([^」]+)」/g,'<strong>「$1」</strong>');
+    el.innerHTML = formatted;
+  }
+}
+
+function saveImage(){
+  const wrap = document.getElementById("fursona-canvas");
+  const name = (document.getElementById("fursona-name")||{}).value||"";
+  const persona = derivePersonality([]);
+  const desc = fetchPersonaDesc();
+  const typeCode = "TYPE · "+answers.slice(0,5).join("-");
+  const W=900,H=490,topH=310;
+  const canvas=document.createElement("canvas");
+  canvas.width=W; canvas.height=H;
+  const ctx=canvas.getContext("2d");
+
+  function rr(x,y,w,h,r){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y);
+    ctx.quadraticCurveTo(x+w,y,x+w,y+r); ctx.lineTo(x+w,y+h-r);
+    ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h); ctx.lineTo(x+r,y+h);
+    ctx.quadraticCurveTo(x,y+h,x,y+h-r); ctx.lineTo(x,y+r);
+    ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
+  }
+  function wrapText(text,x,y,maxW,lineH){
+    let line="";
+    for(const c of text){
+      if(ctx.measureText(line+c).width>maxW&&line){ctx.fillText(line,x,y);y+=lineH;line=c;}
+      else line+=c;
+    }
+    if(line)ctx.fillText(line,x,y);
+  }
+
+  function drawCard(){
+    ctx.save();
+    rr(0,0,W,H,20); ctx.clip();
+
+    // background
+    ctx.fillStyle="#0d0b1a"; ctx.fillRect(0,0,W,H);
+    const grd=ctx.createLinearGradient(0,0,W,topH);
+    grd.addColorStop(0,"#16122a"); grd.addColorStop(1,"#1e1938");
+    ctx.fillStyle=grd; ctx.fillRect(0,0,W,topH);
+
+    // character image 256x256
+    const IS=256,IX=32,IY=(topH-IS)/2|0;
+    ctx.save();
+    rr(IX,IY,IS,IS,12); ctx.clip();
+    const imgs=wrap.querySelectorAll("img");
+    imgs.forEach(img=>ctx.drawImage(img,IX,IY,IS,IS));
+    ctx.restore();
+    ctx.strokeStyle="#2e2760"; ctx.lineWidth=1;
+    rr(IX,IY,IS,IS,12); ctx.stroke();
+
+    // right panel
+    const TX=IX+IS+24,TW=W-TX-32;
+    let TY=IY+4;
+
+    ctx.font="11px sans-serif"; ctx.fillStyle="rgba(160,156,200,0.5)";
+    ctx.fillText("FURSONA NAME",TX,TY+11); TY+=28;
+
+    ctx.font="bold 26px 'Noto Serif TC',serif"; ctx.fillStyle="#e8e3ff";
+    ctx.fillText(name||"未命名",TX,TY+24); TY+=44;
+
+    ctx.font="10px sans-serif"; ctx.fillStyle="rgba(160,156,200,0.4)";
+    ctx.fillText(typeCode,TX,TY+10); TY+=22;
+
+    ctx.font="bold 15px 'Noto Serif TC',serif"; ctx.fillStyle="#A897FF";
+    ctx.fillText(persona.title,TX,TY+14); TY+=28;
+
+    const rTxt=["✦ RARE","◈ UNCOMMON","○ UNCOMMON","· COMMON"][persona.rarityIdx];
+    ctx.font="9px sans-serif";
+    const bw=ctx.measureText(rTxt).width+16;
+    ctx.fillStyle="rgba(255,215,0,0.1)"; rr(TX,TY,bw,20,4); ctx.fill();
+    ctx.strokeStyle="rgba(255,215,0,0.25)"; ctx.lineWidth=1; rr(TX,TY,bw,20,4); ctx.stroke();
+    ctx.fillStyle="#FFD700"; ctx.fillText(rTxt,TX+8,TY+13); TY+=32;
+
+    // tags 2x2
+    const COLS=["#A897FF","#FF6B9D","#7BD4F5","#B8F5A0"];
+    const BGS=["rgba(168,151,255,0.08)","rgba(255,107,157,0.08)","rgba(123,212,245,0.08)","rgba(184,245,160,0.08)"];
+    const BDS=["rgba(168,151,255,0.35)","rgba(255,107,157,0.35)","rgba(123,212,245,0.35)","rgba(184,245,160,0.35)"];
+    const tagW=(TW-8)/2,tagH=24,tagR=tagH/2;
+    ctx.font="11px sans-serif";
+    persona.tags.forEach((tag,i)=>{
+      const tx=TX+(i%2)*(tagW+8),ty=TY+Math.floor(i/2)*(tagH+6);
+      ctx.fillStyle=BGS[i]; rr(tx,ty,tagW,tagH,tagR); ctx.fill();
+      ctx.strokeStyle=BDS[i]; ctx.lineWidth=1; rr(tx,ty,tagW,tagH,tagR); ctx.stroke();
+      ctx.fillStyle=COLS[i]; ctx.textAlign="center";
+      ctx.fillText(tag.text,tx+tagW/2,ty+16); ctx.textAlign="left";
+    });
+
+    // divider
+    ctx.strokeStyle="rgba(46,39,96,0.6)"; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(32,topH); ctx.lineTo(W-32,topH); ctx.stroke();
+
+    // description
+    ctx.font="14px 'Zen Kaku Gothic New',sans-serif"; ctx.fillStyle="#a09cc8";
+    wrapText(desc,32,topH+30,W-64,26);
+
+    // hashtags
+    ctx.font="11px sans-serif"; ctx.fillStyle="#7B6EF6";
+    ctx.fillText("#靈魂獸設調色盤  #FurSOULna  #Furry  #FurryArt",32,H-44);
+
+    // watermark
+    ctx.font="10px sans-serif"; ctx.fillStyle="rgba(160,156,200,0.35)";
+    ctx.textAlign="right"; ctx.fillText("made by Peisuky",W-16,H-18); ctx.textAlign="left";
+
+    ctx.restore();
+    const a=document.createElement("a");
+    a.download=(name||"fursona")+"_card.png";
+    a.href=canvas.toDataURL("image/png"); a.click();
+  }
+
+  const imgs=wrap.querySelectorAll("img");
+  if(imgs.length===0){drawCard();return;}
+  let loaded=0;
+  imgs.forEach(img=>{
+    if(img.complete){loaded++;if(loaded===imgs.length)drawCard();}
+    else{img.onload=()=>{loaded++;if(loaded===imgs.length)drawCard();};}
+  });
+}
+
+function encodeResultURL(){
+  history.replaceState(null,"",location.pathname+"#r="+answers.join(""));
+}
+
+function copyLink(){
+  encodeResultURL();
+  navigator.clipboard.writeText(location.href).then(()=>{
+    const btn=document.querySelector(".copy-link-btn");
+    const orig=btn.textContent;
+    btn.textContent="✓ 已複製！";
+    setTimeout(()=>{btn.textContent=orig;},2000);
+  }).catch(()=>alert(location.href));
+}
+
+function initFromURL(){
+  const m=location.hash.match(/^#r=(\d+)$/);
+  if(m&&m[1].length===questions.length){
+    const parsed=m[1].split("").map(Number);
+    if(parsed.every((a,i)=>a>=0&&a<questions[i].options.length)){
+      answers=parsed; current=questions.length; introShown=true;
+    }
+  }
+}
+
+function restart(){current=0;answers=[];introShown=false;history.replaceState(null,"",location.pathname);render();}
+initFromURL();
+render();
+</script>
+</body>
+</html>
