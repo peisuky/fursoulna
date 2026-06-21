@@ -472,24 +472,39 @@ body{
 }
 @keyframes skelShimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 
-.name-input-wrap{margin-bottom:1.5rem}
-.name-label{font-size:12px;color:var(--text2);display:block;margin-bottom:6px;text-align:center;letter-spacing:0.06em}
+.name-input-wrap{
+  margin-bottom:1.5rem;
+  background:rgba(123,110,246,0.06);
+  border:1px solid rgba(123,110,246,0.25);
+  border-radius:12px;
+  padding:16px 18px;
+}
+.name-label-row{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.name-label{font-size:13px;color:var(--text2);letter-spacing:0.06em}
+.required-badge{
+  font-size:11px;font-weight:700;letter-spacing:0.05em;
+  background:rgba(255,100,100,0.15);color:#ff7070;
+  border:1px solid rgba(255,100,100,0.3);
+  border-radius:4px;padding:1px 7px;
+}
 .name-input{
   font-family:"Zen Kaku Gothic New",sans-serif;
-  font-size:15px;
+  font-size:16px;
   width:100%;
-  padding:10px 14px;
+  padding:11px 14px;
   border-radius:8px;
-  border:1px solid var(--border);
-  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(123,110,246,0.3);
+  background:rgba(255,255,255,0.05);
   color:var(--text);
   box-sizing:border-box;
   text-align:center;
   outline:none;
-  transition:border-color 0.15s;
+  transition:border-color 0.2s,box-shadow 0.2s;
 }
-.name-input:focus{border-color:var(--accent)}
+.name-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(123,110,246,0.2)}
 .name-input::placeholder{color:var(--text2);opacity:0.4}
+.name-input.error{border-color:#ff7070;box-shadow:0 0 0 3px rgba(255,112,112,0.2)}
+.name-error-msg{color:#ff7070;font-size:12px;margin-top:8px;text-align:center;display:none}
 .action-row{display:flex;gap:10px;margin-bottom:1.5rem}
 .save-btn,.share-btn{
   font-family:"Zen Kaku Gothic New",sans-serif;
@@ -640,8 +655,10 @@ function showIntro(){
       <div class="intro-preface">
         <p>
           你的靈魂深處<strong>住著一隻獸</strong>。<br><br>
-          它不一定有名字，但它知道你<strong>喜歡什麼</strong>、<strong>害怕什麼</strong>、<strong>在人群中怎麼移動</strong>。<br><br>
-          這份測驗不問你「是哪種動物」——它問的是<strong>你怎麼活著</strong>。<br>
+          他不一定有名字，但他知道你<br>
+          <strong>喜歡什麼</strong>、<strong>害怕什麼</strong>、<strong>在人群中怎麼移動</strong>。<br><br>
+          這份測驗不問你「是哪種動物」<br>
+          問的是<strong>你怎麼活著</strong>。<br><br>
           然後，幫你把那個輪廓，描出來。
         </p>
       </div>
@@ -653,8 +670,12 @@ function showIntro(){
         <span class="eq-item"><span class="eq-num">∞</span><span class="eq-label">種組合</span></span>
       </div>
       <div class="name-input-wrap">
-        <label class="name-label">為你的靈魂獸設命名（選填）</label>
-        <input class="name-input" id="user-name-input" type="text" placeholder="輸入名字" maxlength="20">
+        <div class="name-label-row">
+          <span class="name-label">為你的靈魂獸設命名</span>
+          <span class="required-badge">必填</span>
+        </div>
+        <input class="name-input" id="user-name-input" type="text" placeholder="輸入你的名字" maxlength="20" oninput="clearNameError()">
+        <div class="name-error-msg" id="name-error-msg">✦ 請先輸入你的獸設名字，再開始測驗</div>
       </div>
       <button class="start-btn" onclick="startQuiz()">▶ &nbsp; 調色開始</button>
       <div class="start-hint">選擇直覺反應，不必過度思考</div>
@@ -663,9 +684,24 @@ function showIntro(){
 }
 
 function startQuiz(){
-  userName=(document.getElementById("user-name-input")||{}).value||"";
+  const nameEl=document.getElementById("user-name-input");
+  const val=(nameEl||{}).value||"";
+  if(!val.trim()){
+    if(nameEl) nameEl.classList.add("error");
+    const errEl=document.getElementById("name-error-msg");
+    if(errEl) errEl.style.display="block";
+    if(nameEl) nameEl.focus();
+    return;
+  }
+  userName=val.trim();
   introShown=true;
   render();
+}
+function clearNameError(){
+  const nameEl=document.getElementById("user-name-input");
+  if(nameEl) nameEl.classList.remove("error");
+  const errEl=document.getElementById("name-error-msg");
+  if(errEl) errEl.style.display="none";
 }
 
 function randomTest(){
@@ -864,6 +900,9 @@ function drawShareCard(layerKeys, persona, desc, typeCode){
     const IS=256,IX=28,IY=(topH-IS)/2|0;
     ctx.save();
     rr(IX,IY,IS,IS,12); ctx.clip();
+    const charGrd=ctx.createLinearGradient(IX,IY,IX,IY+IS);
+    charGrd.addColorStop(0,"#332a5a"); charGrd.addColorStop(1,"#554750");
+    ctx.fillStyle=charGrd; ctx.fillRect(IX,IY,IS,IS);
     imgList.forEach(img=>ctx.drawImage(img,IX,IY,IS,IS));
     ctx.restore();
     ctx.strokeStyle="#2e2760"; ctx.lineWidth=1;
@@ -873,7 +912,7 @@ function drawShareCard(layerKeys, persona, desc, typeCode){
     let TY=IY+2;
 
     ctx.font="15px sans-serif"; ctx.fillStyle="rgba(160,156,200,0.5)";
-    ctx.fillText("FURSONA NAME",TX,TY+14); TY+=32;
+    ctx.fillText("FURSOULNA NAME",TX,TY+14); TY+=32;
 
     ctx.font="bold 34px 'Noto Serif TC',serif"; ctx.fillStyle="#e8e3ff";
     ctx.fillText(name||"未命名",TX,TY+32); TY+=52;
@@ -884,7 +923,7 @@ function drawShareCard(layerKeys, persona, desc, typeCode){
     ctx.font="bold 21px 'Noto Serif TC',serif"; ctx.fillStyle="#A897FF";
     ctx.fillText(persona.title,TX,TY+18); TY+=32;
 
-    const rTxt=["✦ RARE","◈ UNCOMMON","○ UNCOMMON","· COMMON"][persona.rarityIdx];
+    const rTxt=["✦ MYTHIC","◈ EPIC","○ RARE","· UNCOMMON"][persona.rarityIdx];
     ctx.font="14px sans-serif";
     const bw=ctx.measureText(rTxt).width+16;
     ctx.fillStyle="rgba(255,215,0,0.1)"; rr(TX,TY,bw,24,4); ctx.fill();
@@ -911,7 +950,7 @@ function drawShareCard(layerKeys, persona, desc, typeCode){
     wrapText(desc,28,topH+30,W-56,26);
 
     ctx.font="15px sans-serif"; ctx.fillStyle="#7B6EF6";
-    ctx.fillText("#靈魂獸設調色盤  #FurSOULna  #Furry  #FurryArt",28,H-36);
+    ctx.fillText("#靈魂獸設調色盤  #FurSOULna  #Furry  #FurryArt  #peisuky",28,H-36);
 
     ctx.font="13px sans-serif"; ctx.fillStyle="rgba(160,156,200,0.35)";
     ctx.textAlign="right"; ctx.fillText("made by Peisuky",W-16,H-16); ctx.textAlign="left";
